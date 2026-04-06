@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MathForge Auth</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .box {
+            background: #111;
+            padding: 40px;
+            border-radius: 20px;
+            width: 360px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            color: white;
+        }
+
+        h2 { text-align:center; margin-bottom:20px; }
+
+        input {
+            width:100%;
+            padding:10px;
+            margin-bottom:12px;
+            border-radius:8px;
+            border:1px solid #444;
+            background:#222;
+            color:white;
+        }
+
+        button {
+            width:100%;
+            padding:10px;
+            border:none;
+            border-radius:8px;
+            margin-bottom:10px;
+            cursor:pointer;
+            font-weight:bold;
+        }
+
+        .login-btn { background:#4CAF50; color:white; }
+        .signup-btn { background:#667eea; color:white; }
+        .secondary-btn { background:#ff9800; color:white; }
+        .danger-btn { background:#e91e63; color:white; }
+
+        .message {
+            text-align:center;
+            padding:10px;
+            margin-top:10px;
+            display:none;
+            border-radius:6px;
+        }
+
+        .success { background:#2e7d32; }
+        .error { background:#c62828; }
+
+        .link {
+            text-align:center;
+            margin-top:10px;
+            cursor:pointer;
+            font-size:14px;
+            color:#90caf9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>🔨 MathForge</h2>
+
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+
+    <button class="login-btn" onclick="login()">Login</button>
+    <button class="signup-btn" onclick="signup()">Sign Up</button>
+
+    <div class="link" onclick="showChangePassword()">Change Password</div>
+    <div class="link" onclick="showForgotPassword()">Forgot Password?</div>
+
+    <div id="extraFields"></div>
+    <div id="message" class="message"></div>
+</div>
+
+<script>
+const API_BASE = "http://127.0.0.1:8000";
+
+function showMessage(msg, type){
+    const box = document.getElementById("message");
+    box.textContent = msg;
+    box.className = "message " + type;
+    box.style.display = "block";
+}
+
+async function signup(){
+    const username = usernameVal();
+    const password = passwordVal();
+    if(!username || !password) return showMessage("Fill all fields","error");
+
+    const res = await fetch(API_BASE+"/signup",{
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    if(res.ok){
+        showMessage("Signup successful! You can now login.","success");
+    } else {
+        showMessage(data.detail || "Signup failed","error");
+    }
+}
+
+async function login(){
+    const username = usernameVal();
+    const password = passwordVal();
+    if(!username || !password) return showMessage("Fill all fields","error");
+
+    const res = await fetch(API_BASE+"/login",{
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    if(res.ok && data.token){
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("username", username);
+        window.location.href = "dashboard.html";
+    } else {
+        showMessage(data.detail || "Login failed","error");
+    }
+}
+
+function showChangePassword(){
+    document.getElementById("extraFields").innerHTML = `
+        <input type="password" id="oldPassword" placeholder="Old Password">
+        <input type="password" id="newPassword" placeholder="New Password">
+        <button class="secondary-btn" onclick="changePassword()">Submit Change</button>
+    `;
+}
+
+async function changePassword(){
+    const username = usernameVal();
+    const old_password = document.getElementById("oldPassword").value;
+    const new_password = document.getElementById("newPassword").value;
+    const token = localStorage.getItem("token");
+
+    if(!token) return showMessage("Login first to change password","error");
+
+    const res = await fetch(API_BASE+"/change-password",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ username, old_password, new_password })
+    });
+
+    const data = await res.json();
+    if(res.ok) showMessage("Password changed successfully","success");
+    else showMessage(data.detail || "Error","error");
+}
+
+function showForgotPassword(){
+    document.getElementById("extraFields").innerHTML = `
+        <button class="danger-btn" onclick="forgotPassword()">Generate Reset Token</button>
+        <input type="text" id="resetToken" placeholder="Enter Reset Token">
+        <input type="password" id="newResetPassword" placeholder="New Password">
+        <button class="secondary-btn" onclick="resetPassword()">Reset Password</button>
+    `;
+}
+
+async function forgotPassword(){
+    const username = usernameVal();
+
+    const res = await fetch(API_BASE+"/forgot-password",{
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ username })
+    });
+
+    const data = await res.json();
+    if(res.ok){
+        showMessage("Reset Token: "+data.reset_token,"success");
+    } else {
+        showMessage(data.detail || "Error","error");
+    }
+}
+
+async function resetPassword(){
+    const reset_token = document.getElementById("resetToken").value;
+    const new_password = document.getElementById("newResetPassword").value;
+
+    const res = await fetch(API_BASE+"/reset-password",{
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ reset_token, new_password })
+    });
+
+    const data = await res.json();
+    if(res.ok){
+        showMessage("Password reset successful","success");
+    } else {
+        showMessage(data.detail || "Invalid token","error");
+    }
+}
+
+function usernameVal(){ return document.getElementById("username").value.trim(); }
+function passwordVal(){ return document.getElementById("password").value.trim(); }
+</script>
+
+</body>
+</html>

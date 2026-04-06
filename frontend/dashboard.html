@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MathForge Dashboard</title>
+    <style>
+        body{
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color:white;
+            margin:0;
+        }
+
+        .header{
+            padding:20px;
+            display:flex;
+            justify-content:space-between;
+            background:rgba(0,0,0,0.2);
+        }
+
+        .container{
+            padding:30px;
+        }
+
+        textarea{
+            width:100%;
+            padding:10px;
+            border-radius:8px;
+            border:none;
+            min-height:100px;
+            margin-bottom:15px;
+            color:black;
+        }
+
+        button{
+            padding:10px 20px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-weight:bold;
+        }
+
+        .analyze-btn{
+            background:#ffd700;
+            color:black;
+        }
+
+        .logout{
+            background:#ff4757;
+            color:white;
+        }
+
+        .card{
+            background:rgba(255,255,255,0.1);
+            padding:20px;
+            border-radius:10px;
+            margin-top:20px;
+        }
+
+        pre{
+            background:#1e1e1e;
+            padding:15px;
+            border-radius:8px;
+            overflow:auto;
+        }
+
+        .success{ color:#00ff88; }
+        .error{ color:#ff4757; }
+        .ambiguous{ color:#ffa502; }
+    </style>
+</head>
+<body>
+
+<script>
+if(!localStorage.getItem("token")){
+    window.location.href = "index.html";
+}
+</script>
+
+<div class="header">
+    <div>🚀 MathForge Dashboard</div>
+    <div>
+        <span id="usernameDisplay"></span>
+        <button class="logout" onclick="logout()">Logout</button>
+    </div>
+</div>
+
+<div class="container">
+    <textarea id="inputText" placeholder="Enter description..."></textarea>
+    <button class="analyze-btn" onclick="analyze()">Analyze</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+const API_BASE = "http://127.0.0.1:8000";
+const token = localStorage.getItem("token");
+document.getElementById("usernameDisplay").textContent = localStorage.getItem("username");
+
+function logout(){
+    localStorage.clear();
+    window.location.href="index.html";
+}
+
+async function analyze(){
+    const text = document.getElementById("inputText").value.trim();
+    if(!text) return alert("Enter some text");
+
+    const res = await fetch(API_BASE+"/analyze",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json",
+            "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ text })
+    });
+
+    if(res.status===401){
+        logout();
+        return;
+    }
+
+    const data = await res.json();
+    displayResults(data);
+}
+
+function displayResults(data){
+    let html = `<div class="card">`;
+
+    if(data.status==="success")
+        html += `<h3 class="success">SUCCESS</h3>`;
+    else if(data.status==="ambiguous")
+        html += `<h3 class="ambiguous">AMBIGUOUS</h3>`;
+    else
+        html += `<h3 class="error">ERROR</h3>`;
+
+    html += `<p><b>Confidence:</b> ${Math.round((data.confidence_score||0)*100)}%</p>`;
+    html += `<p><b>Explanation:</b> ${data.explanation||""}</p>`;
+
+    if(data.intermediate_representation)
+        html += `<h4>IR</h4><pre>${JSON.stringify(data.intermediate_representation,null,2)}</pre>`;
+
+    if(data.pseudocode)
+        html += `<h4>Pseudocode</h4><pre>${data.pseudocode}</pre>`;
+
+    if(data.executable_code)
+        html += `<h4>Code</h4><pre>${data.executable_code}</pre>`;
+
+    if(data.time_complexity || data.space_complexity){
+        html += `<h4>Complexity</h4>`;
+        if(data.time_complexity)
+            html += `<p>Time: ${data.time_complexity}</p>`;
+        if(data.space_complexity)
+            html += `<p>Space: ${data.space_complexity}</p>`;
+    }
+
+    if(data.numerical_analysis)
+        html += `<h4>Numerical Analysis</h4><pre>${JSON.stringify(data.numerical_analysis,null,2)}</pre>`;
+
+    html += `</div>`;
+    document.getElementById("result").innerHTML = html;
+}
+</script>
+
+</body>
+</html>
