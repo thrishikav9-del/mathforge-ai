@@ -2,16 +2,22 @@
 
 ## Overview
 
-MathForge is a deterministic framework that converts natural language mathematical problem descriptions into formal algorithmic representations, executable Python code, and computational complexity analysis.
+MathForge is a deterministic AI framework that transforms natural language mathematical problem descriptions into formal algorithmic representations, executable Python code, and computational complexity analysis.
 
-The system bridges the gap between human-readable mathematical descriptions and machine-executable logic by transforming unstructured input into structured, interpretable, and reproducible computational artifacts.
+The system bridges the gap between human-readable problem statements and machine-executable logic by converting unstructured input into structured, interpretable, and reproducible computational outputs.
+
+---
+
+## 📄 Documentation
+
+* Research Paper / Report (to be added)
 
 ---
 
 ## Key Contributions
 
 * End-to-end transformation from natural language to executable code
-* Deterministic rule-based pipeline ensuring reproducibility
+* Deterministic pipeline ensuring reproducibility and consistency
 * Intermediate Representation (IR) for structured abstraction
 * Automated pseudocode and Python code generation
 * Time and space complexity estimation
@@ -21,9 +27,9 @@ The system bridges the gap between human-readable mathematical descriptions and 
 
 ## Motivation
 
-Mathematical problems are typically expressed in natural language, whereas computational systems require formal syntax. This mismatch introduces complexity in translating human reasoning into executable solutions.
+Mathematical problems are typically expressed in natural language, while computational systems require formal syntax. This mismatch introduces complexity in translating human reasoning into executable solutions.
 
-MathForge addresses this gap by automating the complete pipeline:
+MathForge addresses this challenge by automating the complete pipeline:
 
 * Problem interpretation
 * Algorithm identification
@@ -44,7 +50,7 @@ The system follows a compiler-inspired deterministic pipeline:
 6. Complexity analysis (time & space)
 7. Output generation with confidence score
 
-The pipeline ensures transparency, traceability, and consistency across all stages.
+This architecture ensures transparency, traceability, and reproducibility across all stages.
 
 ---
 
@@ -59,10 +65,10 @@ The pipeline ensures transparency, traceability, and consistency across all stag
 
 ### 2. Intermediate Representation (IR)
 
-A structured abstraction layer that encodes:
+A structured abstraction layer encoding:
 
 * Algorithm type
-* Control structures (loop, recursion)
+* Control structures (loops, recursion)
 * Data structures
 * Computational properties
 
@@ -72,7 +78,7 @@ A structured abstraction layer that encodes:
 * Deterministic template selection
 * Ensures correctness and avoids hallucination
 
-Supported algorithms:
+**Supported algorithms:**
 
 * Sorting (Bubble, Selection, Merge Sort)
 * Searching (Binary Search)
@@ -89,10 +95,11 @@ Supported algorithms:
 
 * Rule-based inference of time and space complexity
 * Based on structural properties of algorithms
-* Example:
 
-  * Nested loops → O(n²)
-  * Divide & conquer → O(n log n)
+**Examples:**
+
+* Nested loops → O(n²)
+* Divide & conquer → O(n log n)
 
 ### 6. Confidence Scoring
 
@@ -119,14 +126,13 @@ Supported algorithms:
 mathforge/
 │── backend/           # API and processing pipeline
 │── frontend/          # User interface
-│── nlp/               # NLP engine
-│── ir/                # Intermediate representation logic
-│── templates/         # Algorithm templates
+│── data/              # Sample inputs / datasets
+│── evaluation/        # Testing and evaluation scripts
 │── README.md
 
 ---
 
-## How to Run
+## Installation and Setup
 
 ### 1. Clone the Repository
 
@@ -160,6 +166,38 @@ Open frontend/index.html in browser
 
 ---
 
+## Example Output
+
+**Input:**
+"Find factorial of a number"
+
+**Output:**
+
+* Algorithm: Recursion
+
+**Pseudocode:**
+
+```
+function factorial(n):
+    if n == 0:
+        return 1
+    return n * factorial(n-1)
+```
+
+**Python Code:**
+
+```
+def factorial(n):
+    if n == 0:
+        return 1
+    return n * factorial(n-1)
+```
+
+**Time Complexity:** O(n)
+**Space Complexity:** O(n)
+
+---
+
 ## Results
 
 Experimental evaluation (50 test cases):
@@ -170,16 +208,6 @@ Experimental evaluation (50 test cases):
 * Average confidence score: 0.88
 
 ---
-## Example Output
-
-Input:
-"Find factorial of a number"
-
-Output:
-- Algorithm: Recursion
-- Pseudocode: ...
-- Python Code: ...
-- Time Complexity: O(n)
 
 ## Advantages
 
@@ -194,7 +222,7 @@ Output:
 
 * Limited to predefined algorithm templates
 * No symbolic algebra support
-* Rule-based NLP may fail for ambiguous input
+* Rule-based NLP may struggle with ambiguous inputs
 
 ---
 
@@ -217,13 +245,25 @@ Output:
 
 ---
 
-## Disclaimer
+## Why This Project Matters
 
-This project is developed for academic and research purposes, focusing on deterministic AI systems and algorithm generation.
+Unlike LLM-based systems, MathForge uses a deterministic pipeline, ensuring reproducibility, interpretability, and reliability in algorithm generation.
+
+This makes it particularly valuable for:
+
+* Education
+* Research
+* Verified and trustworthy code generation
 
 ---
 
-## Authors
+## Disclaimer
 
-Thrishika and Team
-B.Tech CSE (AI)
+This project is developed for academic and research purposes and demonstrates deterministic AI system design.
+
+---
+
+## Author
+
+Thrishika
+B.Tech in Computer Science and Engineering (AI)
