@@ -8,11 +8,7 @@ The system bridges the gap between human-readable problem statements and machine
 
 ---
 
-## 📄 Documentation
 
-* Research Paper / Report (to be added)
-
----
 
 ## Key Contributions
 
