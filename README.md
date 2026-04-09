@@ -170,6 +170,16 @@ Experimental evaluation (50 test cases):
 * Average confidence score: 0.88
 
 ---
+## Example Output
+
+Input:
+"Find factorial of a number"
+
+Output:
+- Algorithm: Recursion
+- Pseudocode: ...
+- Python Code: ...
+- Time Complexity: O(n)
 
 ## Advantages
 
