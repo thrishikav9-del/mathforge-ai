@@ -1,4 +1,10 @@
-# MathForge: Natural Language to Algorithm Generation Framework
+# MathForge AI
+
+**Deterministic Natural Language to Algorithm Generation Framework**
+
+MathForge AI is a research-oriented framework that converts natural language mathematical problems into structured algorithmic representations, executable Python code, and computational complexity analysis using a deterministic, compiler-inspired pipeline.
+
+
 
 ## Overview
 
