@@ -4,6 +4,7 @@
 
 MathForge AI is a deterministic framework that transforms natural language mathematical problem statements into structured algorithmic representations, executable Python code, and computational complexity analysis. Inspired by compiler design principles, the framework emphasizes reproducibility, interpretability, and transparent decision-making through a rule-based processing pipeline.
 
+---
 
 ## Overview
 
